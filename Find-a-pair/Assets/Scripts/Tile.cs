@@ -10,6 +10,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private bool _isLock;
     [SerializeField] private int _id = 0;
     [SerializeField] private VoicePlayer _player;
+    private Coroutine _wait;
 
     public void Start()
     {
@@ -24,7 +25,10 @@ public class Tile : MonoBehaviour
     
     public void DeselectTiles()
     {
-        if(!_isLock) _tileAnim.SetTrigger("Back");
+        if (!_isLock && _wait == null)
+        {
+            _wait = StartCoroutine(WaitSeconds());
+        }
     }
 
     public void OnMouseDown()
@@ -43,8 +47,16 @@ public class Tile : MonoBehaviour
     public int SetId(int id) => _id = id;
     public Sprite GetRandomSprite() => _randomSpriteFront;
     public void SetRandomSprite(Sprite front)
-    {
+    { 
         _randomSpriteFront = front;
         _front.sprite = _randomSpriteFront;
+    }
+
+    IEnumerator WaitSeconds()
+    {
+        Debug.Log("Start");
+        yield return new WaitForSeconds(0.5f);
+        _tileAnim.SetTrigger("Back");
+        _wait = null;
     }
 }

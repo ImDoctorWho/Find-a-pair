@@ -10,10 +10,19 @@ public class GenerateLevel : MonoBehaviour
     [SerializeField] private Tile[,] _map;
     [SerializeField] private int mapH, mapW;
     [SerializeField] private GameObject _voiceCanvas;
+    [SerializeField] private Camera _mainCamera;
 
 
     public void GenerateTilesInLevel()
     {
+        if(_width == 3) _mainCamera.orthographicSize = 3;
+        if (_width == 4)
+        {
+            _mainCamera.transform.position = new Vector3(-0.45f, 0, -10);
+            _mainCamera.orthographicSize = 4;
+        }
+        if (_width == 5) _mainCamera.orthographicSize = 5;
+        int sizeHMax = 0, sizeVMax = 0, sizeHMin = 0, sizeVMin = 0;
         _voiceCanvas.SetActive(false);
         int sizeMap = _width * _height;
         _map = new Tile[_height, _width];
@@ -21,11 +30,28 @@ public class GenerateLevel : MonoBehaviour
         if (sizeMap % 2 == 1) _countPair = (sizeMap / 2) + 1;
         else _countPair = sizeMap / 2;
 
-        int sizeHMax = _width / 2;
-        int sizeHMin = -(_width / 2);
-        int sizeVMax = _height / 2;
-        int sizeVMin = -(_height / 2);
 
+        if(_width % 2 == 1)
+        {
+            sizeHMax = _width / 2;
+            sizeHMin = -(_width / 2);
+        }
+        else
+        {
+            sizeHMax = (_width / 2) - 1;
+            sizeHMin = -(_width / 2);
+        }
+        if (_height % 2 == 1)
+        {
+            sizeVMax = _height / 2;
+            sizeVMin = -(_height / 2);
+        }
+        else
+        {
+            sizeVMax = (_height / 2) - 1;
+            sizeVMin = -(_height / 2);
+        }
+        
 
         for(int i = sizeHMin; i <= sizeHMax; i++)
         {
@@ -58,6 +84,8 @@ public class GenerateLevel : MonoBehaviour
             int i = Random.Range(0, _height);
             int j = Random.Range(0, _width);
 
+            Debug.Log(i + " - " + j);
+
             if (_map[i, j].GetId() == 0)
             {
                 _map[i, j].SetRandomSprite(_frontSprites[countSprite]);
@@ -81,9 +109,14 @@ public class GenerateLevel : MonoBehaviour
         else return false;
     }
 
+    public void CheckGameTiles()
+    {
+        
+    }
+
     public void SetHeight(int height) => _height = height;
     public void SetWidth(int width) => _width = width;
     public int GetPair() => _countPair;
 
-
+    
 }
